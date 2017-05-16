@@ -4,26 +4,31 @@ import domain.Message;
 import domain.User;
 import jms.JMSClient;
 import jms.JMSDispatcher;
+import service.ClientService;
 
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Kevin.
  */
 public class Main {
-
-    static User loggedInUser;
-    static User receiverUser;
-    static Message message;
+    private static ClientService clientService;
 
     public static void main(String[] argv) {
-        loggedInUser = new User("senderUser");
-        receiverUser = new User("receiverUser");
-        message = new Message(loggedInUser, receiverUser, "aiiiiiight");
+        User loggedInUser = new User("U2");
+        clientService = new ClientService(loggedInUser);
 
-        /*
-        JMSClient client = new JMSClient(loggedInUser);
-        client.sendMessage(message, receiverUser); */
+        System.out.println("Connected to the server. You can now chat!");
+        readConsole();
+    }
+
+    public static void readConsole(){
+        Scanner scanner = new Scanner(System.in);
+        String messageText = scanner.nextLine();
+
+        clientService.sendMessage(messageText, "U1");
+        readConsole();
     }
 }

@@ -3,6 +3,8 @@ package jms;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -14,10 +16,13 @@ public class JMSConsumer {
     private static Connection connection;
     private static Channel channel;
     private static com.rabbitmq.client.Consumer jmsConsumer;
+    private static List<JMSMessageReceiver> listeners;
 
     private JMSConsumer() {
+        listeners = new ArrayList<JMSMessageReceiver>();
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
+
 
         try {
             connection = connectionFactory.newConnection();
@@ -53,8 +58,18 @@ public class JMSConsumer {
                                        AMQP.BasicProperties properties, byte[] body)
                     throws IOException {
                 String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + message + "'");
+                notifyListeners(message);
             }
         };
+    }
+
+    private static void notifyListeners(String message){
+        for(JMSMessageReceiver listener : listeners){
+            listener.messageReceived(message);
+        }
+    }
+
+    public static void addListener(JMSMessageReceiver listener){
+        listeners.add(listener);
     }
 }
