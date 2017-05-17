@@ -10,6 +10,7 @@ import service.ClientListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Kevin.
@@ -40,18 +41,28 @@ public class JMSClient implements JMSMessageReceiver {
         // todo update status
     }
 
-    private String messageToJson(Message message) {
-        Gson jsonMessage = new GsonBuilder().create();
-        return jsonMessage.toJson(message);
-    }
-
-    private static Message jsonToMessage(String json) {
-        Gson jsonMessage = new GsonBuilder().create();
-        return jsonMessage.fromJson(json, Message.class);
-    }
-
     public void addListener(ClientListener clientListener) {
         this.listeners.add(clientListener);
+    }
+
+    @Override
+    public void messageReceived(String message) {
+        Message receivedMessage = jsonToMessage(message);
+
+        for (ClientListener listener : listeners) {
+            listener.handleMessageReceived(receivedMessage);
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            JMSDispatcher.closeDispatcher();
+            JMSConsumer.closeConsumer();;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
     }
 
     private void startListening() {
@@ -63,12 +74,14 @@ public class JMSClient implements JMSMessageReceiver {
         }
     }
 
-    @Override
-    public void messageReceived(String message) {
-        Message receivedMessage = jsonToMessage(message);
-
-        for(ClientListener listener: listeners){
-            listener.handleMessageReceived(receivedMessage);
-        }
+    private String messageToJson(Message message) {
+        Gson jsonMessage = new GsonBuilder().create();
+        return jsonMessage.toJson(message);
     }
+
+    private static Message jsonToMessage(String json) {
+        Gson jsonMessage = new GsonBuilder().create();
+        return jsonMessage.fromJson(json, Message.class);
+    }
+
 }

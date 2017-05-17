@@ -36,10 +36,6 @@ public class JMSDispatcher {
         return instance;
     }
 
-    private static void declareQueue(String queueName) throws IOException {
-        channel.queueDeclare(queueName, false, false, false, null);
-    }
-
     public static void publishMessage(String queueName, String message) throws IOException {
         declareQueue(queueName);
         channel.basicPublish("", queueName, null, message.getBytes());
@@ -48,5 +44,9 @@ public class JMSDispatcher {
     public static void closeDispatcher() throws IOException, TimeoutException {
         channel.close();
         connection.close();
+    }
+
+    private static void declareQueue(String queueName) throws IOException {
+        channel.queueDeclare(queueName, false, false, false, null);
     }
 }

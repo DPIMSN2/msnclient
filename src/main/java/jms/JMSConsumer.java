@@ -46,6 +46,18 @@ public class JMSConsumer {
         declareQueue(queueName);
     }
 
+    public static void addListener(JMSMessageReceiver listener) {
+        listeners.add(listener);
+    }
+
+    public static void closeConsumer(){
+        try {
+            connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void declareQueue(String queueName) throws IOException {
         channel.queueDeclare(queueName, false, false, false, null);
         channel.basicConsume(queueName, true, jmsConsumer);
@@ -63,13 +75,10 @@ public class JMSConsumer {
         };
     }
 
-    private static void notifyListeners(String message){
-        for(JMSMessageReceiver listener : listeners){
+    private static void notifyListeners(String message) {
+        for (JMSMessageReceiver listener : listeners) {
             listener.messageReceived(message);
         }
     }
 
-    public static void addListener(JMSMessageReceiver listener){
-        listeners.add(listener);
-    }
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="7000.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="frontend.controller.ClientController">
+    <children>
+        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+            <children>
+            <TabPane layoutX="14.0" layoutY="14.0" prefHeight="509.0" prefWidth="340.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Login">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TextField fx:id="tfUsername" layoutX="96.0" layoutY="25.0" />
+                              <Text layoutX="14.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
+                              <Text layoutX="14.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
+                              <TextField fx:id="tfPassword" layoutX="96.0" layoutY="55.0" />
+                              <Button fx:id="btnLogin" layoutX="96.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Login" />
+                              <Button fx:id="btnLogout" layoutX="97.0" layoutY="368.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Logout" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </Tab>
+                  <Tab text="Chat">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label alignment="CENTER" layoutX="13.0" layoutY="30.0" style="&#10;" text="Receiver" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="tfReceiver" layoutX="109.0" layoutY="31.0" prefHeight="25.0" prefWidth="200.0" />
+                              <ListView fx:id="lvMessages" layoutX="13.0" layoutY="91.0" prefHeight="238.0" prefWidth="314.0" />
+                              <Button fx:id="btnSendMessage" layoutX="257.0" layoutY="336.0" mnemonicParsing="false" text="Send" />
+                              <TextField fx:id="tfMessage" layoutX="14.0" layoutY="336.0" prefHeight="25.0" prefWidth="234.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
