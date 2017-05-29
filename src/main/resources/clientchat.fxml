@@ -9,7 +9,7 @@
     <children>
         <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <children>
-            <TabPane layoutX="14.0" layoutY="14.0" prefHeight="509.0" prefWidth="340.0" tabClosingPolicy="UNAVAILABLE">
+            <TabPane layoutX="14.0" layoutY="14.0" prefHeight="509.0" prefWidth="340.0" tabClosingPolicy="UNAVAILABLE" fx:id="tpPane">
               <tabs>
                 <Tab text="Login">
                   <content>
@@ -20,7 +20,7 @@
                               <Text layoutX="14.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
                               <TextField fx:id="tfPassword" layoutX="96.0" layoutY="55.0" />
                               <Button fx:id="btnLogin" layoutX="96.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Login" />
-                              <Button fx:id="btnLogout" layoutX="97.0" layoutY="368.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Logout" />
+                              <Button fx:id="btnLogout" layoutX="96.0" layoutY="138.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Logout" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -38,6 +38,17 @@
                               <ListView fx:id="lvMessages" layoutX="13.0" layoutY="91.0" prefHeight="238.0" prefWidth="314.0" />
                               <Button fx:id="btnSendMessage" layoutX="257.0" layoutY="336.0" mnemonicParsing="false" text="Send" />
                               <TextField fx:id="tfMessage" layoutX="14.0" layoutY="336.0" prefHeight="25.0" prefWidth="234.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab text="Status">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ChoiceBox layoutX="35.0" layoutY="39.0" prefWidth="150.0" fx:id="cbStatus"/>
+                              <Label layoutX="35.0" layoutY="14.0" text="Status"  />
+                              <Button layoutX="35.0" layoutY="78.0" mnemonicParsing="false" text="Update Status" fx:id="btnUpdateStatus" />
                            </children>
                         </AnchorPane>
                      </content>

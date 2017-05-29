@@ -1,8 +1,9 @@
 package service;
 
 import domain.Message;
+import domain.Status;
 import domain.User;
-import jms.JMSClient;
+import jms.ClientApplicationGateway;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +12,19 @@ import java.util.List;
  * Created by Kevin.
  */
 public class ClientService implements ClientListener {
-    JMSClient jmsClient;
+    ClientApplicationGateway client;
     User loggedInUser;
     List<ClientListener> listeners;
 
     public ClientService(User loggedInUser) {
         this.loggedInUser = loggedInUser;
         listeners = new ArrayList<>();
-        jmsClient = new JMSClient(loggedInUser);
-        jmsClient.addListener(this);
+        client = new ClientApplicationGateway(loggedInUser);
+        client.addListener(this);
     }
 
     private void sendMessage(Message message) {
-        jmsClient.sendMessage(message);
+        client.sendMessage(message);
     }
 
     public Message sendMessage(String textMessage, String receiverUsername){
@@ -34,7 +35,7 @@ public class ClientService implements ClientListener {
     }
 
     public void logout(){
-        jmsClient.closeConnection();
+        client.closeConnection();
     }
 
     public void addListener(ClientListener listener){
@@ -46,5 +47,9 @@ public class ClientService implements ClientListener {
         for (ClientListener listener:listeners){
             listener.handleMessageReceived(message);
         }
+    }
+
+    public void updateStatus(Status currentStatus) {
+        client.updateStatus(currentStatus);
     }
 }

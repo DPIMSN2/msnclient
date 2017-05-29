@@ -9,13 +9,13 @@ import java.util.concurrent.TimeoutException;
  * Created by Kevin.
  */
 
-public class JMSDispatcher {
-    private static JMSDispatcher instance;
+public class MessageSenderGateway {
+    private static MessageSenderGateway instance;
     private static ConnectionFactory connectionFactory;
     private static Connection connection;
     private static Channel channel;
 
-    private JMSDispatcher() {
+    private MessageSenderGateway() {
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
 
@@ -29,9 +29,9 @@ public class JMSDispatcher {
         }
     }
 
-    public static JMSDispatcher getInstance() {
+    public static MessageSenderGateway getInstance() {
         if (instance == null) {
-            instance = new JMSDispatcher();
+            instance = new MessageSenderGateway();
         }
         return instance;
     }

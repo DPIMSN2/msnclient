@@ -10,15 +10,15 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by Kevin.
  */
-public class JMSConsumer {
-    private static JMSConsumer instance;
+public class MessageReceiverGateway {
+    private static MessageReceiverGateway instance;
     private static ConnectionFactory connectionFactory;
     private static Connection connection;
     private static Channel channel;
     private static com.rabbitmq.client.Consumer jmsConsumer;
     private static List<JMSMessageReceiver> listeners;
 
-    private JMSConsumer() {
+    private MessageReceiverGateway() {
         listeners = new ArrayList<JMSMessageReceiver>();
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
@@ -35,9 +35,9 @@ public class JMSConsumer {
         }
     }
 
-    public static JMSConsumer getInstance() {
+    public static MessageReceiverGateway getInstance() {
         if (instance == null) {
-            instance = new JMSConsumer();
+            instance = new MessageReceiverGateway();
         }
         return instance;
     }

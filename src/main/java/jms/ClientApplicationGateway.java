@@ -15,34 +15,44 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by Kevin.
  */
-public class JMSClient implements JMSMessageReceiver {
-    private final String SERVERQUEUE = "chatServer";
+public class ClientApplicationGateway implements JMSMessageReceiver {
+    private final String MESSAGESERVER = "chatServer";
+    private final String STATUSSERVER = "statusServer";
     private User loggedInUser;
     private List<ClientListener> listeners;
 
-    public JMSClient(User loggedInUser) {
-        JMSDispatcher.getInstance();
-        JMSConsumer.getInstance();
+    public ClientApplicationGateway(User loggedInUser) {
+        MessageSenderGateway.getInstance();
+        MessageReceiverGateway.getInstance();
         this.loggedInUser = loggedInUser;
-        listeners = new ArrayList<ClientListener>();
+        listeners = new ArrayList<>();
         startListening();
     }
 
     public void sendMessage(Message message) {
         String jsonMessage = messageToJson(message);
         try {
-            JMSDispatcher.publishMessage(SERVERQUEUE, jsonMessage);
+            MessageSenderGateway.publishMessage(MESSAGESERVER, jsonMessage);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void updateStatus(Status status) {
-        // todo update status
+        this.loggedInUser.setStatus(status);
+        String jsonUser = userToJson(loggedInUser);
+        try{
+            MessageSenderGateway.publishMessage(STATUSSERVER, jsonUser);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+
     public void addListener(ClientListener clientListener) {
-        this.listeners.add(clientListener);
+        if (!listeners.contains(clientListener)) {
+            this.listeners.add(clientListener);
+        }
     }
 
     @Override
@@ -56,8 +66,8 @@ public class JMSClient implements JMSMessageReceiver {
 
     public void closeConnection() {
         try {
-            JMSDispatcher.closeDispatcher();
-            JMSConsumer.closeConsumer();;
+            MessageSenderGateway.closeDispatcher();
+            MessageReceiverGateway.closeConsumer();;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
@@ -67,8 +77,8 @@ public class JMSClient implements JMSMessageReceiver {
 
     private void startListening() {
         try {
-            JMSConsumer.addListener(this);
-            JMSConsumer.receiveMessages(loggedInUser.getUsername());
+            MessageReceiverGateway.addListener(this);
+            MessageReceiverGateway.receiveMessages(loggedInUser.getUsername());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,9 +89,13 @@ public class JMSClient implements JMSMessageReceiver {
         return jsonMessage.toJson(message);
     }
 
-    private static Message jsonToMessage(String json) {
+    private Message jsonToMessage(String json) {
         Gson jsonMessage = new GsonBuilder().create();
         return jsonMessage.fromJson(json, Message.class);
     }
 
+    private String userToJson(User user) {
+        Gson jsonStatus = new GsonBuilder().create();
+        return jsonStatus.toJson(user);
+    }
 }
