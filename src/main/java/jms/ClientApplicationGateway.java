@@ -24,9 +24,13 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
     public ClientApplicationGateway(User loggedInUser) {
         MessageSenderGateway.getInstance();
         MessageReceiverGateway.getInstance();
+        TopicReceiverGateway.getInstance();
+
         this.loggedInUser = loggedInUser;
         listeners = new ArrayList<>();
         startListening();
+
+        TopicReceiverGateway.subscribeToTopic(loggedInUser.getUsername());
     }
 
     public void sendMessage(Message message) {

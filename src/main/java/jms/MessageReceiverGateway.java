@@ -19,7 +19,7 @@ public class MessageReceiverGateway {
     private static List<JMSMessageReceiver> listeners;
 
     private MessageReceiverGateway() {
-        listeners = new ArrayList<JMSMessageReceiver>();
+        listeners = new ArrayList<>();
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
 
