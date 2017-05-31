@@ -12,6 +12,11 @@ public class User {
         this.username = username;
     }
 
+    public User(String username, Status status){
+        this.username = username;
+        this.status = status;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -34,5 +39,10 @@ public class User {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString(){
+        return username + " : " + getStatus().getStatusName();
     }
 }

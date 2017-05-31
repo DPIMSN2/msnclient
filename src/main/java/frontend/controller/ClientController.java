@@ -15,6 +15,7 @@ import service.ClientService;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -29,9 +30,7 @@ public class ClientController implements Initializable, ClientListener {
     private TextField tfUsername;
     @FXML
     private TextField tfPassword;
-    @FXML
-    private TextField tfReceiver;
-    @FXML
+        @FXML
     private ListView lvMessages;
     @FXML
     private TextField tfMessage;
@@ -41,19 +40,31 @@ public class ClientController implements Initializable, ClientListener {
     private ChoiceBox cbStatus;
     @FXML
     private TabPane tpPane;
+    @FXML
+    private Button btnAddFriend;
+    @FXML
+    private ListView lvFriends;
+    @FXML
+    private TextField tfFriend;
+
 
     private ClientService clientService;
     ObservableList<String> messages;
+    ObservableList<User> friends;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnLogin.setOnAction((T) -> btnLogin());
         btnSendMessage.setOnAction((T) -> btnSendMessageClick());
         btnUpdateStatus.setOnAction((T) -> btnUpdateStatus());
+        btnAddFriend.setOnAction((T) -> btnAddFriend());
 
         messages = FXCollections.observableArrayList();
         messages.add("Connected! You can now talk with your partner");
         lvMessages.setItems(messages);
+
+        friends = FXCollections.observableArrayList();
+        lvFriends.setItems(friends);
 
         cbStatus.setItems(createStatusList());
         cbStatus.getSelectionModel().clearAndSelect(0);
@@ -65,12 +76,26 @@ public class ClientController implements Initializable, ClientListener {
         Platform.setImplicitExit(false);
     }
 
+    private void btnAddFriend() {
+        String friendName = tfFriend.getText();
+
+        if (!friendName.isEmpty() && friends.stream().noneMatch(f -> f.getUsername().equals(friendName))) {
+            User newFriend  = new User(friendName, Status.Offline);
+            friends.add(newFriend);
+
+            clientService.addFriend(friendName);
+        }
+    }
+
     private void btnSendMessageClick() {
-        String receiver = tfReceiver.getText();
-        String message = tfMessage.getText();
-        if (!receiver.isEmpty() && !message.isEmpty()) {
-            Message sendmessage = clientService.sendMessage(message, receiver);
-            handleMessageReceived(sendmessage);
+        if (lvFriends.getSelectionModel().getSelectedItem() != null) {
+            User receiver = (User) lvFriends.getSelectionModel().getSelectedItem();
+            String message = tfMessage.getText();
+
+            if (!message.isEmpty()) {
+                Message sendmessage = clientService.sendMessage(message, receiver.getUsername());
+                handleMessageReceived(sendmessage);
+            }
         }
     }
 
@@ -90,11 +115,11 @@ public class ClientController implements Initializable, ClientListener {
     }
 
     private void btnUpdateStatus() {
-        Status currentStatus = (Status)cbStatus.getSelectionModel().getSelectedItem();
+        Status currentStatus = (Status) cbStatus.getSelectionModel().getSelectedItem();
         clientService.updateStatus(currentStatus);
     }
 
-    private ObservableList<Status> createStatusList(){
+    private ObservableList<Status> createStatusList() {
         ArrayList<Status> statuses = new ArrayList();
         statuses.add(Status.Online);
         statuses.add(Status.Busy);
@@ -107,5 +132,18 @@ public class ClientController implements Initializable, ClientListener {
     public void handleMessageReceived(Message message) {
         String stringMessage = message.getSender().getUsername() + ": " + message.getMessageText();
         Platform.runLater(() -> messages.add(stringMessage));
+    }
+
+    @Override
+    public void handleStatusUpdateReceived(User user) {
+        Platform.runLater(() -> {
+            for(User friend : friends){
+                if(friend.getUsername().equals(user.getUsername())){
+                    friend.setStatus(user.getStatus());
+                    lvFriends.setItems(null);
+                    lvFriends.setItems(friends);
+                }
+            }
+        });
     }
 }

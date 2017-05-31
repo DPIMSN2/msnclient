@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by Kevin.
  */
-public class ClientApplicationGateway implements JMSMessageReceiver {
+public class ClientApplicationGateway implements JMSMessageReceiver, JMSTopicReceiver {
     private final String MESSAGESERVER = "chatServer";
     private final String STATUSSERVER = "statusServer";
     private User loggedInUser;
@@ -29,8 +29,6 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
         this.loggedInUser = loggedInUser;
         listeners = new ArrayList<>();
         startListening();
-
-        TopicReceiverGateway.subscribeToTopic(loggedInUser.getUsername());
     }
 
     public void sendMessage(Message message) {
@@ -42,10 +40,14 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
         }
     }
 
+    public void addFriend(String friendName) {
+        TopicReceiverGateway.subscribeToTopic(friendName);
+    }
+
     public void updateStatus(Status status) {
         this.loggedInUser.setStatus(status);
         String jsonUser = userToJson(loggedInUser);
-        try{
+        try {
             MessageSenderGateway.publishMessage(STATUSSERVER, jsonUser);
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,10 +70,20 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
         }
     }
 
+    @Override
+    public void handleTopicReceived(String message) {
+        User receivedUser = jsonToUser(message);
+
+        for (ClientListener listener : listeners) {
+            listener.handleStatusUpdateReceived(receivedUser);
+        }
+    }
+
     public void closeConnection() {
         try {
             MessageSenderGateway.closeDispatcher();
-            MessageReceiverGateway.closeConsumer();;
+            MessageReceiverGateway.closeConsumer();
+            ;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (TimeoutException e) {
@@ -83,6 +95,8 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
         try {
             MessageReceiverGateway.addListener(this);
             MessageReceiverGateway.receiveMessages(loggedInUser.getUsername());
+
+            TopicReceiverGateway.addListener(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,5 +115,10 @@ public class ClientApplicationGateway implements JMSMessageReceiver {
     private String userToJson(User user) {
         Gson jsonStatus = new GsonBuilder().create();
         return jsonStatus.toJson(user);
+    }
+
+    private User jsonToUser(String json) {
+        Gson jsonStatus = new GsonBuilder().create();
+        return jsonStatus.fromJson(json, User.class);
     }
 }

@@ -1,7 +1,5 @@
 package jms;
 
-import domain.Message;
-
 /**
  * Created by Kevin.
  */

@@ -3,6 +3,8 @@ package jms;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -16,8 +18,12 @@ public class TopicReceiverGateway {
     private static final String EXCHANGE_NAME = "statusUpdate";
     private static Consumer topicConsumer;
     private static String queueName;
+    private static List<JMSTopicReceiver> listeners;
+
 
     private TopicReceiverGateway() {
+        listeners = new ArrayList<>();
+
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
 
@@ -50,13 +56,22 @@ public class TopicReceiverGateway {
         }
     }
 
+    public static void addListener(JMSTopicReceiver jmsTopicReceiver) {
+        if (!listeners.contains(jmsTopicReceiver)) {
+            listeners.add(jmsTopicReceiver);
+        }
+    }
+
     private void createTopicConsumer() {
         topicConsumer = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,
                                        AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
+                for (JMSTopicReceiver jmsTopicReceiver : listeners) {
+                    jmsTopicReceiver.handleTopicReceived(message);
+                }
             }
         };
         try {

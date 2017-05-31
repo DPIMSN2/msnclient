@@ -12,7 +12,7 @@ public class MainFx extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("clientchat.fxml"));
         primaryStage.setTitle("MSN2.0");
-        primaryStage.setScene(new Scene(root, 400, 700));
+        primaryStage.setScene(new Scene(root, 700, 500));
         primaryStage.show();
     }
 
