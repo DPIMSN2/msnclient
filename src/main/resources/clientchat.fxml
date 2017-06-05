@@ -17,10 +17,7 @@
                            <children>
                               <TextField fx:id="tfUsername" layoutX="96.0" layoutY="25.0" />
                               <Text layoutX="14.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
-                              <Text layoutX="14.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-                              <TextField fx:id="tfPassword" layoutX="96.0" layoutY="55.0" />
                               <Button fx:id="btnLogin" layoutX="96.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Login" />
-                              <Button fx:id="btnLogout" layoutX="96.0" layoutY="138.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="Logout" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -30,8 +27,6 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
                               <ListView fx:id="lvMessages" layoutX="13.0" layoutY="91.0" prefHeight="238.0" prefWidth="314.0" />
-                              <Button fx:id="btnSendMessage" layoutX="257.0" layoutY="336.0" mnemonicParsing="false" text="Send" />
-                              <TextField fx:id="tfMessage" layoutX="14.0" layoutY="336.0" prefHeight="25.0" prefWidth="234.0" />
                               <ListView fx:id="lvFriends" layoutX="357.0" layoutY="91.0" prefHeight="238.0" prefWidth="314.0" />
                               <Label alignment="CENTER" layoutX="357.0" layoutY="56.0" style="&#10;" text="Friends" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
                                  <font>

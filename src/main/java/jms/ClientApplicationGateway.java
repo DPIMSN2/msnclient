@@ -104,6 +104,7 @@ public class ClientApplicationGateway implements JMSMessageReceiver, JMSTopicRec
 
     private String messageToJson(Message message) {
         Gson jsonMessage = new GsonBuilder().create();
+        System.out.println(jsonMessage.toJson(message));
         return jsonMessage.toJson(message);
     }
 
@@ -114,6 +115,7 @@ public class ClientApplicationGateway implements JMSMessageReceiver, JMSTopicRec
 
     private String userToJson(User user) {
         Gson jsonStatus = new GsonBuilder().create();
+        System.out.println(jsonStatus.toJson(user));
         return jsonStatus.toJson(user);
     }
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="300.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <children>
+        <Label fx:id="lblchatting" alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Chatting with:" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
+          <font>
+            <Font size="18.0" />
+          </font>
+        </Label>
+            <TextField fx:id="tfMessage" layoutX="14.0" layoutY="220.0" prefHeight="25.0" prefWidth="289.0" />
+            <ListView fx:id="lvMessages" layoutX="14.0" layoutY="50.0" prefHeight="159.0" prefWidth="289.0" />
+            <Button fx:id="btnSendMessage" layoutX="17.0" layoutY="255.0" mnemonicParsing="false" text="Send" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>

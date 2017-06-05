@@ -7,9 +7,15 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import service.ClientListener;
 import service.ClientService;
 
@@ -25,15 +31,9 @@ public class ClientController implements Initializable, ClientListener {
     @FXML
     private Button btnLogin;
     @FXML
-    private Button btnSendMessage;
-    @FXML
     private TextField tfUsername;
     @FXML
-    private TextField tfPassword;
-        @FXML
     private ListView lvMessages;
-    @FXML
-    private TextField tfMessage;
     @FXML
     private Button btnUpdateStatus;
     @FXML
@@ -55,9 +55,13 @@ public class ClientController implements Initializable, ClientListener {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnLogin.setOnAction((T) -> btnLogin());
-        btnSendMessage.setOnAction((T) -> btnSendMessageClick());
         btnUpdateStatus.setOnAction((T) -> btnUpdateStatus());
         btnAddFriend.setOnAction((T) -> btnAddFriend());
+        lvFriends.setOnMouseClicked(click -> {
+            if (click.getClickCount() == 2) {
+                lvFriendsClicked();
+            }
+        });
 
         messages = FXCollections.observableArrayList();
         messages.add("Connected! You can now talk with your partner");
@@ -76,28 +80,35 @@ public class ClientController implements Initializable, ClientListener {
         Platform.setImplicitExit(false);
     }
 
+    private void lvFriendsClicked() {
+        User receiver = (User) lvFriends.getSelectionModel().getSelectedItem();
+        if(receiver != null) {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/chatscreen.fxml"));
+                ChatController chatController = new ChatController(receiver.getUsername(), clientService);
+                fxmlLoader.setController(chatController);
+                Parent root1 = fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root1));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
     private void btnAddFriend() {
         String friendName = tfFriend.getText();
 
         if (!friendName.isEmpty() && friends.stream().noneMatch(f -> f.getUsername().equals(friendName))) {
-            User newFriend  = new User(friendName, Status.Offline);
+            User newFriend = new User(friendName, Status.Offline);
             friends.add(newFriend);
 
             clientService.addFriend(friendName);
         }
     }
 
-    private void btnSendMessageClick() {
-        if (lvFriends.getSelectionModel().getSelectedItem() != null) {
-            User receiver = (User) lvFriends.getSelectionModel().getSelectedItem();
-            String message = tfMessage.getText();
-
-            if (!message.isEmpty()) {
-                Message sendmessage = clientService.sendMessage(message, receiver.getUsername());
-                handleMessageReceived(sendmessage);
-            }
-        }
-    }
 
     private void btnLogin() {
         String username = tfUsername.getText();
@@ -137,8 +148,8 @@ public class ClientController implements Initializable, ClientListener {
     @Override
     public void handleStatusUpdateReceived(User user) {
         Platform.runLater(() -> {
-            for(User friend : friends){
-                if(friend.getUsername().equals(user.getUsername())){
+            for (User friend : friends) {
+                if (friend.getUsername().equals(user.getUsername())) {
                     friend.setStatus(user.getStatus());
                     lvFriends.setItems(null);
                     lvFriends.setItems(friends);
